@@ -12,18 +12,25 @@ public class MovementController : MonoBehaviour
     public KeyCode inputLeft = KeyCode.A;
     public KeyCode inputRight = KeyCode.D;
 
+    public AnimatedSpriteRenderer spriteRendererUp;
+    public AnimatedSpriteRenderer spriteRendererDown;
+    public AnimatedSpriteRenderer spriteRendererLeft;
+    public AnimatedSpriteRenderer spriteRendererRight;
+
+    private AnimatedSpriteRenderer activeSpriteRenderer;
     private void Awake()
     {
         rigidbody = GetComponent<Rigidbody2D>();
+        activeSpriteRenderer = spriteRendererDown;
     }
 
     private void Update()
     {
-        if (Input.GetKey(inputUp)) { SetDirection(Vector2.up); }
-        else if (Input.GetKey(inputDown)) { SetDirection(Vector2.down); }
-        else if (Input.GetKey(inputLeft)) { SetDirection(Vector2.left); }
-        else if (Input.GetKey(inputRight)) { SetDirection(Vector2.right); }
-        else { SetDirection(Vector2.zero); }
+        if (Input.GetKey(inputUp)) { SetDirection(Vector2.up, spriteRendererUp); }
+        else if (Input.GetKey(inputDown)) { SetDirection(Vector2.down, spriteRendererDown); }
+        else if (Input.GetKey(inputLeft)) { SetDirection(Vector2.left, spriteRendererLeft); }
+        else if (Input.GetKey(inputRight)) { SetDirection(Vector2.right, spriteRendererRight); }
+        else { SetDirection(Vector2.zero, activeSpriteRenderer); }
     }
 
     private void FixedUpdate()
@@ -34,8 +41,18 @@ public class MovementController : MonoBehaviour
         rigidbody.MovePosition(position + translation);
     }
 
-    private void SetDirection(Vector2 newDirection)
+    private void SetDirection(Vector2 newDirection, AnimatedSpriteRenderer spriteRendererer)
     {
         direction = newDirection;
+
+        spriteRendererUp.enabled = spriteRendererer == spriteRendererUp;
+        spriteRendererDown.enabled = spriteRendererer == spriteRendererDown;
+        spriteRendererLeft.enabled = spriteRendererer == spriteRendererLeft;
+        spriteRendererRight.enabled = spriteRendererer == spriteRendererRight;
+
+
+        activeSpriteRenderer = spriteRendererer;
+        activeSpriteRenderer.idle = direction == Vector2.zero;
+
     }
 }
